@@ -3,13 +3,14 @@ import json
 import requests
 import numpy as np
 
-class Constants:
+
+class Q1Constants:
     restaurant_url = "https://raw.githubusercontent.com/Papagoat/brain-assessment/main/restaurant_data.json"
     country_code_file = "Country-Code.xlsx"
-    q1_json_normalize_column = "restaurants"
-    q1_left_on = 'restaurant.location.country_id'
-    q1_right_on = 'Country Code'
-    q1_column_dict = {
+    normalize_record_path = "restaurants"
+    left_join_key = 'restaurant.location.country_id'
+    right_join_key = 'Country Code'
+    columns_to_rename = {
         'restaurant.R.res_id': 'Restaurant Id',
         'restaurant.name': 'Restaurant Name',
         'restaurant.location.city': 'City',
@@ -17,7 +18,8 @@ class Constants:
         'restaurant.user_rating.aggregate_rating': 'User Aggregate Rating',
         'restaurant.cuisines': 'Cuisines'
     }
-    q1_selected_columns = [
+    column_convert = "restaurant.user_rating.aggregate_rating"
+    column_selection = [
         'Restaurant Id', 
         'Restaurant Name', 
         'Country', 
@@ -26,12 +28,12 @@ class Constants:
         'User Aggregate Rating', 
         'Cuisines'
     ]
-
+    
 
 class QuestionOne:
     def __init__(self):
-        self.restaurant_url = Constants.restaurant_url
-        self.country_code_file = Constants.country_code_file
+        self.restaurant_url = Q1Constants.restaurant_url
+        self.country_code_file = Q1Constants.country_code_file
         self.restaurant_data = None
 
     def extract_json(self):
@@ -45,40 +47,39 @@ class QuestionOne:
         json_data = self.extract_json()
         return pd.json_normalize(json_data, column_to_normalize)
 
-    def read_csv(self):
+    def read_csv(self, csv):
         try:
-            return pd.read_excel(self.country_code_file)
+            return pd.read_excel(csv)
         except FileNotFoundError:
-            print(f"File not found: {self.country_code_file}")
+            print(f"File not found: {csv}")
 
-    def merge_dataframes(self, left_df:pd.DataFrame, right_df:pd.DataFrame, left_on:str, right_on:str, how='left'):
+    def merge_dataframes(
+            self, left_df:pd.DataFrame, 
+            right_df:pd.DataFrame, left_on:str, 
+            right_on:str, how='left'):
+
         combined_df = pd.merge(
             left_df, right_df, 
             how=how, left_on=left_on, right_on=right_on
         )
         return combined_df
-
-    def rename_columns(self, df:pd.DataFrame, column_dict:dict):
-        return df.rename(columns=column_dict)
     
-    def select_columns(self, df, selected_columns: list):
-        return df[selected_columns]
-    
-    def change_datatype():
-        
+    def convert_column_datatype(self, df:pd.DataFrame,column, datatype:str):
+        df[column] = df[column].astype(datatype)
+        return df
 
     def run(self):
-        base_restaurant_df = self.create_json_dataframe(Constants.q1_json_normalize_column)
-        country_code_df = self.read_csv()
+        base_restaurant_df = self.create_json_dataframe(Q1Constants.normalize_record_path)
+        country_code_df = self.read_csv(self.country_code_file)
         self.restaurant_data = self.merge_dataframes(
             base_restaurant_df, country_code_df, 
-            left_on= Constants.q1_left_on, 
-            right_on=Constants.q1_right_on
+            left_on= Q1Constants.left_join_key, right_on=Q1Constants.right_join_key
         )
-        renamed_df = self.rename_columns(self.restaurant_data, Constants.q1_column_dict)
-        filtered_df = self.select_columns(renamed_df, Constants.q1_selected_columns)
-        print(filtered_df)
-
+        self.restaurant_data = self.convert_column_datatype(self.restaurant_data, Q1Constants.column_convert, 'float64')
+        df_to_export = (self.restaurant_data.rename(columns=Q1Constants.columns_to_rename)
+                                            [Q1Constants.column_selection]
+        )
+        print(df_to_export.info())
 
 q1 = QuestionOne()
 q1.run()
