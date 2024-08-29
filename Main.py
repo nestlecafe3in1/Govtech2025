@@ -29,7 +29,7 @@ class Q1Constants:
         'Cuisines'
         ]
 
-    
+
 
 class QuestionOne:
     def __init__(self):
@@ -71,13 +71,14 @@ class QuestionOne:
             )
         # Convertion of column datatype to float
         self.restaurant_df[Q1Constants.column_convert] = self.restaurant_df[Q1Constants.column_convert].astype('float64')
-        # Rename and select columns before export
-        df_to_export = (self.restaurant_df.rename(columns=Q1Constants.columns_to_rename)
-                                            [Q1Constants.column_selection]
-            )
+        # Rename columns to be more presentable
+        self.restaurant_df = self.restaurant_df.rename(columns=Q1Constants.columns_to_rename)
+
+        df_to_export = self.restaurant_df[Q1Constants.column_selection]
         self.export_df_to_csv(df_to_export, Q1Constants.output_file_path)
 
 class Q2Constants:
+    output_file_path = "output/restaurant_events.csv"
     event_column_to_unpack = 'restaurant.zomato_events'
     column_start_date = 'event.start_date'
     column_end_date = 'event.end_date'
@@ -85,11 +86,10 @@ class Q2Constants:
     specified_year = 2019
     photos_column_to_unpack = "event.photos"
     column_selection = [
-        "event.event_id": "Event Id", 
-        "restaurant.photos_url": "Photo URL",
-        "event.title": "Event Title", 
-        "event.start_date": "Event Start Date",
-        "event.end_date": "Event End Date"
+        "event.event_id", "Restaurant Id", 
+        "Restaurant Name", "restaurant.photos_url",
+        "event.title", "event.start_date", 
+        "event.end_date"
         ]
     columns_to_rename = {
         "event.event_id": "Event Id", 
@@ -100,9 +100,11 @@ class Q2Constants:
         }   
 
 
-class QuestionTwo:    
+class QuestionTwo(QuestionOne):    
     def __init__(self, restaurant_df):
+        super().__init__()
         self.restaurant_df = restaurant_df
+
 
     def column_unpacker(self, df:pd.DataFrame, column_to_unpack:str):
         # Expand the lists within the column vertically
@@ -147,10 +149,10 @@ class QuestionTwo:
             Q2Constants.specified_month
         )
         photos_unpacked_df = self.column_unpacker(filtered_event_df, Q2Constants.photos_column_to_unpack)
-        print(len(photos_unpacked_df))
         df_to_export = (photos_unpacked_df[Q2Constants.column_selection]
                                           .rename(Q2Constants.columns_to_rename)
         )
+        super().export_df_to_csv(df_to_export, Q2Constants.output_file_path)  
 
 q1 = QuestionOne()
 q1.run()
