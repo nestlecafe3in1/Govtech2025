@@ -3,10 +3,10 @@ import json
 import requests
 import numpy as np
 
-
 class Q1Constants:
     restaurant_url = "https://raw.githubusercontent.com/Papagoat/brain-assessment/main/restaurant_data.json"
     country_code_file = "Country-Code.xlsx"
+    output_file_path = "output/restaurants.csv"
     normalize_record_path = "restaurants"
     left_join_key = 'restaurant.location.country_id'
     right_join_key = 'Country Code'
@@ -28,6 +28,7 @@ class Q1Constants:
         'User Aggregate Rating', 
         'Cuisines'
     ]
+
     
 
 class QuestionOne:
@@ -53,33 +54,27 @@ class QuestionOne:
         except FileNotFoundError:
             print(f"File not found: {csv}")
 
-    def merge_dataframes(
-            self, left_df:pd.DataFrame, 
-            right_df:pd.DataFrame, left_on:str, 
-            right_on:str, how='left'):
-
-        combined_df = pd.merge(
-            left_df, right_df, 
-            how=how, left_on=left_on, right_on=right_on
-        )
-        return combined_df
-    
-    def convert_column_datatype(self, df:pd.DataFrame,column, datatype:str):
-        df[column] = df[column].astype(datatype)
-        return df
+    def export_df_to_csv(self, df, file_path):
+        try:
+            df.to_csv(file_path, index=False)
+            print(f"Restaurant Data exported successfully to {file_path}")
+        except Exception as e:
+            print(f"Error exporting data: {e}")
 
     def run(self):
         base_restaurant_df = self.create_json_dataframe(Q1Constants.normalize_record_path)
         country_code_df = self.read_csv(self.country_code_file)
-        self.restaurant_data = self.merge_dataframes(
+        self.restaurant_data = pd.merge(
             base_restaurant_df, country_code_df, 
-            left_on= Q1Constants.left_join_key, right_on=Q1Constants.right_join_key
+            left_on= Q1Constants.left_join_key, right_on=Q1Constants.right_join_key,
+            how = "left"
         )
-        self.restaurant_data = self.convert_column_datatype(self.restaurant_data, Q1Constants.column_convert, 'float64')
+        # Convertion of column datatype to float
+        self.restaurant_data[Q1Constants.column_convert] = self.restaurant_data[Q1Constants.column_convert].astype('float64')
         df_to_export = (self.restaurant_data.rename(columns=Q1Constants.columns_to_rename)
                                             [Q1Constants.column_selection]
         )
-        print(df_to_export.info())
+        self.export_df_to_csv(df_to_export, Q1Constants.output_file_path)
 
-q1 = QuestionOne()
-q1.run()
+class Question2:
+    
