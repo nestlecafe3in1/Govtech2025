@@ -17,7 +17,7 @@ class Q1Constants:
         'restaurant.user_rating.votes': 'User Rating Votes',
         'restaurant.user_rating.aggregate_rating': 'User Aggregate Rating',
         'restaurant.cuisines': 'Cuisines'
-    }
+        }
     column_convert = "restaurant.user_rating.aggregate_rating"
     column_selection = [
         'Restaurant Id', 
@@ -27,7 +27,7 @@ class Q1Constants:
         'User Rating Votes', 
         'User Aggregate Rating', 
         'Cuisines'
-    ]
+        ]
 
     
 
@@ -68,37 +68,91 @@ class QuestionOne:
             base_restaurant_df, country_code_df, 
             left_on= Q1Constants.left_join_key, right_on=Q1Constants.right_join_key,
             how = "left"
-        )
+            )
         # Convertion of column datatype to float
         self.restaurant_df[Q1Constants.column_convert] = self.restaurant_df[Q1Constants.column_convert].astype('float64')
         # Rename and select columns before export
         df_to_export = (self.restaurant_df.rename(columns=Q1Constants.columns_to_rename)
                                             [Q1Constants.column_selection]
-        )
+            )
         self.export_df_to_csv(df_to_export, Q1Constants.output_file_path)
 
 class Q2Constants:
     event_column_to_unpack = 'restaurant.zomato_events'
+    column_start_date = 'event.start_date'
+    column_end_date = 'event.end_date'
+    specified_month = 4
+    specified_year = 2019
+    photos_column_to_unpack = "event.photos"
+    column_selection = [
+        "event.event_id": "Event Id", 
+        "restaurant.photos_url": "Photo URL",
+        "event.title": "Event Title", 
+        "event.start_date": "Event Start Date",
+        "event.end_date": "Event End Date"
+        ]
+    columns_to_rename = {
+        "event.event_id": "Event Id", 
+        "restaurant.photos_url": "Photo URL",
+        "event.title": "Event Title", 
+        "event.start_date": "Event Start Date",
+        "event.end_date": "Event End Date"
+        }   
+
 
 class QuestionTwo:    
     def __init__(self, restaurant_df):
         self.restaurant_df = restaurant_df
 
-    def column_unpacker(self, df, column_to_unpack):
+    def column_unpacker(self, df:pd.DataFrame, column_to_unpack:str):
         # Expand the lists within the column vertically
         expanded_df = df.explode(column_to_unpack)
         # Unpack the dictionaries within the specified column horizontally
         flattened_df = pd.json_normalize(
             expanded_df[column_to_unpack]
-        )
+            )
         # Join both dataframes back together
-        merged_df = (expanded_df.drop("column_to_unpack")
-                                .join(flattened_df)
-        )
+        merged_df = expanded_df.join(flattened_df)
         return merged_df
     
-    def month_filter(self)
+    def month_filter(
+            self, df:pd.DataFrame, 
+            column_start_date:str, column_end_date:str,
+            year:int, month:int): 
+        # Convert both columns to datetime  
+        df[column_start_date] = pd.to_datetime(df[column_start_date])
+        df[column_end_date] = pd.to_datetime(df[column_end_date])
+
+        # Condition for event to take place within specified month
+        before_year = (df[column_start_date].dt.year < year)
+        before_or_in_month_year = (
+            (df[column_start_date].dt.year == year) & (df[column_start_date].dt.month <= month)
+            )
+        starts_before_date = (before_year | before_or_in_month_year)
+
+        after_year = (df[column_end_date].dt.year > year)
+        after_or_in_month_year = (
+            (df[column_end_date].dt.year == year) & (df[column_end_date].dt.month >= month)
+            )
+        ends_after_date = (after_year | after_or_in_month_year)
+
+        condition = (ends_after_date & starts_before_date)
+        return df[condition]
 
     def run(self):
         events_unpacked_df = self.column_unpacker(self.restaurant_df, Q2Constants.event_column_to_unpack)
-        
+        filtered_event_df = self.month_filter(
+            events_unpacked_df, Q2Constants.column_start_date,
+            Q2Constants.column_end_date, Q2Constants.specified_year,
+            Q2Constants.specified_month
+        )
+        photos_unpacked_df = self.column_unpacker(filtered_event_df, Q2Constants.photos_column_to_unpack)
+        print(len(photos_unpacked_df))
+        df_to_export = (photos_unpacked_df[Q2Constants.column_selection]
+                                          .rename(Q2Constants.columns_to_rename)
+        )
+
+q1 = QuestionOne()
+q1.run()
+q2 = QuestionTwo(q1.restaurant_df)
+q2.run()
