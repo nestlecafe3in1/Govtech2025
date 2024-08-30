@@ -34,18 +34,18 @@ class Q1Constants:
 class QuestionOne:
     def __init__(self):
         self.restaurant_url = Q1Constants.restaurant_url
-        self.country_code_file = Q1Constants.country_code_file
+        self.country_code_path = Q1Constants.country_code_file
         self.restaurant_df = None
 
-    def extract_json(self):
-        response = requests.get(self.restaurant_url)
+    def extract_json(self, json_url):
+        response = requests.get(json_url)
         if response.ok:
             return response.json()
         else:
             response.raise_for_status()
 
-    def create_json_dataframe(self, column_to_normalize:str):
-        json_data = self.extract_json()
+    def create_json_dataframe(self,json_url:str, column_to_normalize:str):
+        json_data = self.extract_json(json_url)
         return pd.json_normalize(json_data, column_to_normalize)
 
     def read_csv(self, csv:str):
@@ -62,9 +62,9 @@ class QuestionOne:
             print(f"Error exporting data: {e}")
 
     def run(self):
-        base_restaurant_df = self.create_json_dataframe(Q1Constants.normalize_record_path)
-        country_code_df = self.read_csv(self.country_code_file)
-        self.restaurant_df = pd.merge(
+        base_restaurant_df = self.create_json_dataframe(self.restaurant_url, Q1Constants.normalize_record_path)
+        country_code_df = self.read_csv(self.country_code_path)
+        self.restaurant_df = pd.merge(  
             base_restaurant_df, country_code_df, 
             left_on= Q1Constants.left_join_key, right_on=Q1Constants.right_join_key,
             how = "left"
@@ -154,7 +154,25 @@ class QuestionTwo(QuestionOne):
         )
         super().export_df_to_csv(df_to_export, Q2Constants.output_file_path)  
 
+class QuestionThree(QuestionOne):
+    def __init__(self, restaurant_df):
+        super().__init__()
+        self.restaurant_df = restaurant_df
+
+    def dataframe_filter(self, df:pd.DataFrame, column:str,selection:list):
+        filtered_df = df[
+            df[column].isin(selection)
+            ]
+        return filtered_df
+    
+    def
+    
+
+    def run(self):
+        print(self.restaurant_df.info())
+    
 q1 = QuestionOne()
 q1.run()
 q2 = QuestionTwo(q1.restaurant_df)
 q2.run()
+q3 = QuestionThree(q1.restaurant_df.info())
