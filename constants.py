@@ -46,10 +46,12 @@ class Q2Constants:
         "event.end_date": "Event End Date"
         }   
 
-class Q3Constants:  
-    COLUMN_TO_AGGREGATE = 'restaurant.user_rating.rating_text'
-    SPECIFIED_RATINGS = [
+class Q3Constants: 
+    RATINGS_TO_FILTER = [
         'Excellent', 'Very Good', 'Good', 'Average', 'Poor'
         ]
-    AGGREGATES = ['min', 'max']
+    COLUMN_TO_RENAME = {"restaurant.user_rating.rating_text":"Rating Text"}
+    AGGREGATE_RATING_COLUMN = 'User Aggregate Rating'
+    RATING_TEXT_COLUMN = "Rating Text"
+    AGGREGATES_LIST = ['min', 'max']
     SORT_VARIABLE = 'min'

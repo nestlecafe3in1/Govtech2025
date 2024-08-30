@@ -85,34 +85,31 @@ class QuestionThree:
     def __init__(self, restaurant_df:pd.DataFrame):
         self.restaurant_df = restaurant_df
 
-    def dataframe_filter(self, df:pd.DataFrame, column:str,ratings:list):
-        filtered_df = df[
-            df[column].isin(ratings)
-            ]
-        return filtered_df
-    
-    def aggregator(self, 
-                   df:pd.DataFrame, column:str, 
-                   ratings:list, aggregates:list
-                   ):
-         rating_threshold_df = (df.groupby(column, as_index=False)
-                                  .agg(aggregates)
-            )
-         return rating_threshold_df
-
     def run(self):
-        rated_restaurants_df = self.dataframe_filter(
-            self.restaurant_df, Q3Constants.COLUMN_TO_AGGREGATE, Q3Constants.SPECIFIED_RATINGS
+        self.restaurant_df = self.restaurant_df.rename(columns=Q3Constants.COLUMN_TO_RENAME)
+        # Filter for restaurants with specified user rating texts
+        rated_restaurants_df = self.restaurant_df[
+            self.restaurant_df[Q3Constants.RATING_TEXT_COLUMN].isin(Q3Constants.RATINGS_TO_FILTER)
+            ]
+        # Aggregate restaurant data to determine threshold for different rating texts
+        rating_threshold_df = (
+            rated_restaurants_df.groupby(Q3Constants.RATING_TEXT_COLUMN, as_index=False)
+                                [Q3Constants.AGGREGATE_RATING_COLUMN]
+                                .agg(Q3Constants.AGGREGATES_LIST)
             )
-        rating_threshold_df = self.aggregator(
-            rated_restaurants_df, Q3Constants.COLUMN_TO_AGGREGATE, 
-            Q3Constants.SPECIFIED_RATINGS, Q3Constants.AGGREGATES)
+        print('Threshold for the different rating text:')
         print(rating_threshold_df.sort_values(Q3Constants.SORT_VARIABLE))
+        
+class Driver:
+    print("*" * 70)
+    question_one = QuestionOne()
+    question_one.run()
+    print("*" * 70)
+    questiontwo = QuestionTwo(question_one.restaurant_df)
+    questiontwo.run()
+    print("*" * 70)
+    q3 = QuestionThree(question_one.restaurant_df)
+    q3.run()
 
-    
-q1 = QuestionOne()
-q1.run()
-q2 = QuestionTwo(q1.restaurant_df)
-q2.run()
-q3 = QuestionThree()
-q3.run()
+if __name__ == "__main__":
+    driver = Driver()
