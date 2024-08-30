@@ -2,34 +2,7 @@ import pandas as pd
 import json
 import requests
 import numpy as np
-
-class Q1Constants:
-    restaurant_url = "https://raw.githubusercontent.com/Papagoat/brain-assessment/main/restaurant_data.json"
-    country_code_file = "Country-Code.xlsx"
-    output_file_path = "output/restaurants.csv"
-    normalize_record_path = "restaurants"
-    left_join_key = 'restaurant.location.country_id'
-    right_join_key = 'Country Code'
-    columns_to_rename = {
-        'restaurant.R.res_id': 'Restaurant Id',
-        'restaurant.name': 'Restaurant Name',
-        'restaurant.location.city': 'City',
-        'restaurant.user_rating.votes': 'User Rating Votes',
-        'restaurant.user_rating.aggregate_rating': 'User Aggregate Rating',
-        'restaurant.cuisines': 'Cuisines'
-        }
-    column_convert = "restaurant.user_rating.aggregate_rating"
-    column_selection = [
-        'Restaurant Id', 
-        'Restaurant Name', 
-        'Country', 
-        'City', 
-        'User Rating Votes', 
-        'User Aggregate Rating', 
-        'Cuisines'
-        ]
-
-
+from utils import Q1Constants, Q2Constants, Q3Constants
 
 class QuestionOne:
     def __init__(self):
@@ -44,7 +17,7 @@ class QuestionOne:
         else:
             response.raise_for_status()
 
-    def create_json_dataframe(self,json_url:str, column_to_normalize:str):
+    def load_and_normalize_json(self,json_url:str, column_to_normalize:str):
         json_data = self.extract_json(json_url)
         return pd.json_normalize(json_data, column_to_normalize)
 
@@ -62,7 +35,7 @@ class QuestionOne:
             print(f"Error exporting data: {e}")
 
     def run(self):
-        base_restaurant_df = self.create_json_dataframe(self.restaurant_url, Q1Constants.normalize_record_path)
+        base_restaurant_df = self.load_and_normalize_json(self.restaurant_url, Q1Constants.normalize_record_path)
         country_code_df = self.read_csv(self.country_code_path)
         self.restaurant_df = pd.merge(  
             base_restaurant_df, country_code_df, 
@@ -77,27 +50,7 @@ class QuestionOne:
         df_to_export = self.restaurant_df[Q1Constants.column_selection]
         self.export_df_to_csv(df_to_export, Q1Constants.output_file_path)
 
-class Q2Constants:
-    output_file_path = "output/restaurant_events.csv"
-    event_column_to_unpack = 'restaurant.zomato_events'
-    column_start_date = 'event.start_date'
-    column_end_date = 'event.end_date'
-    specified_month = 4
-    specified_year = 2019
-    photos_column_to_unpack = "event.photos"
-    column_selection = [
-        "event.event_id", "Restaurant Id", 
-        "Restaurant Name", "restaurant.photos_url",
-        "event.title", "event.start_date", 
-        "event.end_date"
-        ]
-    columns_to_rename = {
-        "event.event_id": "Event Id", 
-        "restaurant.photos_url": "Photo URL",
-        "event.title": "Event Title", 
-        "event.start_date": "Event Start Date",
-        "event.end_date": "Event End Date"
-        }   
+
 
 
 class QuestionTwo(QuestionOne):    
