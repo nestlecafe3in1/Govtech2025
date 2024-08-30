@@ -1,11 +1,11 @@
 class Q1Constants:
-    restaurant_url = "https://raw.githubusercontent.com/Papagoat/brain-assessment/main/restaurant_data.json"
-    country_code_file = "Country-Code.xlsx"
-    output_file_path = "output/restaurants.csv"
-    normalize_record_path = "restaurants"
-    left_join_key = 'restaurant.location.country_id'
-    right_join_key = 'Country Code'
-    columns_to_rename = {
+    RESTAURANT_URL = "https://raw.githubusercontent.com/Papagoat/brain-assessment/main/restaurant_data.json"
+    COUNTRY_CODEFILE = "Country-Code.xlsx"
+    OUTPUT_FILE_PATH = "output/restaurants.csv"
+    NORMALIZE_RECORD_PATH = "restaurants"
+    LEFT_JOIN_KEY = 'restaurant.location.country_id'
+    RIGHT_JOIN_KEY = 'Country Code'
+    COLUMNS_TO_RENAME = {
         'restaurant.R.res_id': 'Restaurant Id',
         'restaurant.name': 'Restaurant Name',
         'restaurant.location.city': 'City',
@@ -13,8 +13,8 @@ class Q1Constants:
         'restaurant.user_rating.aggregate_rating': 'User Aggregate Rating',
         'restaurant.cuisines': 'Cuisines'
         }
-    column_convert = "restaurant.user_rating.aggregate_rating"
-    column_selection = [
+    COLUMN_CONVERT = "restaurant.user_rating.aggregate_rating"
+    COLUMN_SELECTION = [
         'Restaurant Id', 
         'Restaurant Name', 
         'Country', 
@@ -25,20 +25,20 @@ class Q1Constants:
         ]
     
 class Q2Constants:
-    output_file_path = "output/restaurant_events.csv"
-    event_column_to_unpack = 'restaurant.zomato_events'
-    column_start_date = 'event.start_date'
-    column_end_date = 'event.end_date'
-    specified_month = 4
-    specified_year = 2019
-    photos_column_to_unpack = "event.photos"
-    column_selection = [
+    OUTPUT_FILE_PATH = "output/restaurant_events.csv"
+    EVENT_COLUMN_TO_UNPACK = 'restaurant.zomato_events'
+    COLUMN_START_DATE = 'event.start_date'
+    COLUMN_END_DATE = 'event.end_date'
+    SPECIFIED_MONTH = 4
+    SPECIFIED_YEAR = 2019
+    PHOTOS_COLUMN_TO_UNPACK = "event.photos"
+    COLUMN_SELECTION = [
         "event.event_id", "Restaurant Id", 
         "Restaurant Name", "restaurant.photos_url",
         "event.title", "event.start_date", 
         "event.end_date"
         ]
-    columns_to_rename = {
+    COLUMNS_TO_RENAME = {
         "event.event_id": "Event Id", 
         "restaurant.photos_url": "Photo URL",
         "event.title": "Event Title", 

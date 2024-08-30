@@ -2,62 +2,36 @@ import pandas as pd
 import json
 import requests
 import numpy as np
-from utils import Q1Constants, Q2Constants, Q3Constants
+from constants import Q1Constants, Q2Constants, Q3Constants
+from utils import extract_json, load_and_normalize_json, export_df_to_csv, read_excel
+
 
 class QuestionOne:
     def __init__(self):
-        self.restaurant_url = Q1Constants.restaurant_url
-        self.country_code_path = Q1Constants.country_code_file
+        self.restaurant_url = Q1Constants.RESTAURANT_URL
+        self.country_code_path = Q1Constants.COUNTRY_CODEFILE
         self.restaurant_df = None
 
-    def extract_json(self, json_url):
-        response = requests.get(json_url)
-        if response.ok:
-            return response.json()
-        else:
-            response.raise_for_status()
-
-    def load_and_normalize_json(self,json_url:str, column_to_normalize:str):
-        json_data = self.extract_json(json_url)
-        return pd.json_normalize(json_data, column_to_normalize)
-
-    def read_csv(self, csv:str):
-        try:
-            return pd.read_excel(csv)
-        except FileNotFoundError:
-            print(f"File not found: {csv}")
-
-    def export_df_to_csv(self, df:pd.DataFrame, file_path:str):
-        try:
-            df.to_csv(file_path, index=False)
-            print(f"Restaurant Data exported successfully to {file_path}")
-        except Exception as e:
-            print(f"Error exporting data: {e}")
-
     def run(self):
-        base_restaurant_df = self.load_and_normalize_json(self.restaurant_url, Q1Constants.normalize_record_path)
-        country_code_df = self.read_csv(self.country_code_path)
+        base_restaurant_df = load_and_normalize_json(self.restaurant_url, Q1Constants.NORMALIZE_RECORD_PATH)
+        country_code_df = read_excel(self.country_code_path)
         self.restaurant_df = pd.merge(  
             base_restaurant_df, country_code_df, 
-            left_on= Q1Constants.left_join_key, right_on=Q1Constants.right_join_key,
+            left_on= Q1Constants.LEFT_JOIN_KEY, right_on=Q1Constants.RIGHT_JOIN_KEY,
             how = "left"
             )
         # Convertion of column datatype to float
-        self.restaurant_df[Q1Constants.column_convert] = self.restaurant_df[Q1Constants.column_convert].astype('float64')
+        self.restaurant_df[Q1Constants.COLUMN_CONVERT] = self.restaurant_df[Q1Constants.COLUMN_CONVERT].astype('float64')
         # Rename columns to be more presentable
-        self.restaurant_df = self.restaurant_df.rename(columns=Q1Constants.columns_to_rename)
+        self.restaurant_df = self.restaurant_df.rename(columns=Q1Constants.COLUMNS_TO_RENAME)
 
-        df_to_export = self.restaurant_df[Q1Constants.column_selection]
-        self.export_df_to_csv(df_to_export, Q1Constants.output_file_path)
-
-
+        df_to_export = self.restaurant_df[Q1Constants.COLUMN_SELECTION]
+        export_df_to_csv(df_to_export, Q1Constants.OUTPUT_FILE_PATH)
 
 
-class QuestionTwo(QuestionOne):    
+class QuestionTwo:    
     def __init__(self, restaurant_df):
-        super().__init__()
         self.restaurant_df = restaurant_df
-
 
     def column_unpacker(self, df:pd.DataFrame, column_to_unpack:str):
         # Expand the lists within the column vertically
@@ -95,19 +69,19 @@ class QuestionTwo(QuestionOne):
         return df[condition]
 
     def run(self):
-        events_unpacked_df = self.column_unpacker(self.restaurant_df, Q2Constants.event_column_to_unpack)
+        events_unpacked_df = self.column_unpacker(self.restaurant_df, Q2Constants.EVENT_COLUMN_TO_UNPACK)
         filtered_event_df = self.month_filter(
-            events_unpacked_df, Q2Constants.column_start_date,
-            Q2Constants.column_end_date, Q2Constants.specified_year,
-            Q2Constants.specified_month
+            events_unpacked_df, Q2Constants.COLUMN_START_DATE,
+            Q2Constants.COLUMN_END_DATE, Q2Constants.SPECIFIED_YEAR,
+            Q2Constants.SPECIFIED_MONTH
         )
-        photos_unpacked_df = self.column_unpacker(filtered_event_df, Q2Constants.photos_column_to_unpack)
-        df_to_export = (photos_unpacked_df[Q2Constants.column_selection]
-                                          .rename(Q2Constants.columns_to_rename)
+        photos_unpacked_df = self.column_unpacker(filtered_event_df, Q2Constants.PHOTOS_COLUMN_TO_UNPACK)
+        df_to_export = (photos_unpacked_df[Q2Constants.COLUMN_SELECTION]
+                                          .rename(Q2Constants.COLUMNS_TO_RENAME)
         )
-        super().export_df_to_csv(df_to_export, Q2Constants.output_file_path)  
+        export_df_to_csv(df_to_export, Q2Constants.OUTPUT_FILE_PATH)  
 
-class QuestionThree(QuestionOne):
+class QuestionThree:
     def __init__(self, restaurant_df):
         super().__init__()
         self.restaurant_df = restaurant_df
