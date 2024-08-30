@@ -99,17 +99,35 @@ class QuestionThree:
             )
         print('Threshold for the different rating text:')
         print(rating_threshold_df.sort_values(Q3Constants.SORT_VARIABLE))
-        
+
 class Driver:
-    print("*" * 70)
-    question_one = QuestionOne()
-    question_one.run()
-    print("*" * 70)
-    questiontwo = QuestionTwo(question_one.restaurant_df)
-    questiontwo.run()
-    print("*" * 70)
-    q3 = QuestionThree(question_one.restaurant_df)
-    q3.run()
+    def __init__(self):
+        self.restaurant_df = None
+
+    def run(self):
+        self.run_question_one()
+        print("*" * 70)
+        if self.restaurant_df is not None and not self.restaurant_df.empty:
+            self.run_question_two()
+            print("*" * 70)
+            self.run_question_three()
+        else:
+            print("Error: Restaurant data is not available or empty.")
+
+    def run_question_one(self):
+        question_one = QuestionOne()
+        question_one.run()
+        self.restaurant_df = question_one.restaurant_df
+
+    def run_question_two(self):
+        question_two = QuestionTwo(self.restaurant_df)
+        question_two.run()
+
+    def run_question_three(self):
+        question_three = QuestionThree(self.restaurant_df)
+        question_three.run()
+
 
 if __name__ == "__main__":
     driver = Driver()
+    driver.run()
