@@ -82,24 +82,37 @@ class QuestionTwo:
         export_df_to_csv(df_to_export, Q2Constants.OUTPUT_FILE_PATH)  
 
 class QuestionThree:
-    def __init__(self, restaurant_df):
-        super().__init__()
+    def __init__(self, restaurant_df:pd.DataFrame):
         self.restaurant_df = restaurant_df
 
-    def dataframe_filter(self, df:pd.DataFrame, column:str,selection:list):
+    def dataframe_filter(self, df:pd.DataFrame, column:str,ratings:list):
         filtered_df = df[
-            df[column].isin(selection)
+            df[column].isin(ratings)
             ]
         return filtered_df
     
-    def
-    
+    def aggregator(self, 
+                   df:pd.DataFrame, column:str, 
+                   ratings:list, aggregates:list
+                   ):
+         rating_threshold_df = (df.groupby(column, as_index=False)
+                                  .agg(aggregates)
+            )
+         return rating_threshold_df
 
     def run(self):
-        print(self.restaurant_df.info())
+        rated_restaurants_df = self.dataframe_filter(
+            self.restaurant_df, Q3Constants.COLUMN_TO_AGGREGATE, Q3Constants.SPECIFIED_RATINGS
+            )
+        rating_threshold_df = self.aggregator(
+            rated_restaurants_df, Q3Constants.COLUMN_TO_AGGREGATE, 
+            Q3Constants.SPECIFIED_RATINGS, Q3Constants.AGGREGATES)
+        print(rating_threshold_df.sort_values(Q3Constants.SORT_VARIABLE))
+
     
 q1 = QuestionOne()
 q1.run()
 q2 = QuestionTwo(q1.restaurant_df)
 q2.run()
-q3 = QuestionThree(q1.restaurant_df.info())
+q3 = QuestionThree()
+q3.run()

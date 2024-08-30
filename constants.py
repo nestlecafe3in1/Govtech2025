@@ -47,4 +47,9 @@ class Q2Constants:
         }   
 
 class Q3Constants:  
-    pass
+    COLUMN_TO_AGGREGATE = 'restaurant.user_rating.rating_text'
+    SPECIFIED_RATINGS = [
+        'Excellent', 'Very Good', 'Good', 'Average', 'Poor'
+        ]
+    AGGREGATES = ['min', 'max']
+    SORT_VARIABLE = 'min'
