@@ -12,6 +12,8 @@ The following `python` program  extracts and analyzes restaurant data from Zomat
 
 - **`Summary for Cloud Deployment.docx`**: This is the word document detailing the short summary for cloud deployment and its considerations.
 
+- **`Architecture Diagram.png`**: This is the an illustration of the architecture diagram
+
 ## Pre-requisites
 
 * Python >= 3
