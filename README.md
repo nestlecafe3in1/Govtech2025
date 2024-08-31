@@ -10,6 +10,8 @@ The following `python` program  extracts and analyzes restaurant data from Zomat
 
 - **`EDA.ipynb`**: This is a Jupyter Notebook that details the thought process and exploratory data analysis (EDA) conducted before making edits to `Main.py`.
 
+- **`Summary for Cloud Deployment.docx`**: This is the word document detailing the short summary for cloud deployment and its considerations.
+
 ## Pre-requisites
 
 * Python >= 3
@@ -30,7 +32,8 @@ $ python Main.py
 ```
 ## Output results example
 
-Successful run with python `Main.py` will output the following:
+Successful run with python `Main.py` will output the files `restaurant_events.csv` and `restaurants.csv` into the folder `output_files` output the following:
+
 ```plaintext
 Restaurant Data exported successfully to output/restaurants.csv
 **********************************************************************
