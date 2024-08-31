@@ -77,7 +77,7 @@ class QuestionTwo:
         )
         photos_unpacked_df = self.column_unpacker(filtered_event_df, Q2Constants.PHOTOS_COLUMN_TO_UNPACK)
         df_to_export = (photos_unpacked_df[Q2Constants.COLUMN_SELECTION]
-                                          .rename(Q2Constants.COLUMNS_TO_RENAME)
+                                          .rename(columns=Q2Constants.COLUMNS_TO_RENAME)
         )
         export_df_to_csv(df_to_export, Q2Constants.OUTPUT_FILE_PATH)  
 

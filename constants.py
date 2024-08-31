@@ -1,7 +1,7 @@
 class Q1Constants:
     RESTAURANT_URL = "https://raw.githubusercontent.com/Papagoat/brain-assessment/main/restaurant_data.json"
     COUNTRY_CODEFILE = "Country-Code.xlsx"
-    OUTPUT_FILE_PATH = "output/restaurants.csv"
+    OUTPUT_FILE_PATH = "output_files/restaurants.csv"
     NORMALIZE_RECORD_PATH = "restaurants"
     LEFT_JOIN_KEY = 'restaurant.location.country_id'
     RIGHT_JOIN_KEY = 'Country Code'
@@ -25,7 +25,7 @@ class Q1Constants:
         ]
     
 class Q2Constants:
-    OUTPUT_FILE_PATH = "output/restaurant_events.csv"
+    OUTPUT_FILE_PATH = "output_files/restaurant_events.csv"
     EVENT_COLUMN_TO_UNPACK = 'restaurant.zomato_events'
     COLUMN_START_DATE = 'event.start_date'
     COLUMN_END_DATE = 'event.end_date'
