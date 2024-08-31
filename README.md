@@ -24,14 +24,18 @@ $ python Main.py
 ## Output results example
 
 Successful run with python `Main.py` will output the following:
+```plaintext
 Restaurant Data exported successfully to output/restaurants.csv
 **********************************************************************
 Restaurant Data exported successfully to output/restaurant_events.csv
 **********************************************************************
 Threshold for the different rating text:
-  Rating Text  min  max
-3        Poor  2.2  2.2
-0     Average  2.5  3.4
-2        Good  3.5  3.9
-4   Very Good  4.0  4.4
-1   Excellent  4.5  4.9
+Rating Text  min  max
+Poor         2.2  2.2
+Average      2.5  3.4
+Good         3.5  3.9
+Very Good    4.0  4.4
+Excellent    4.5  4.9
+```
+
+
