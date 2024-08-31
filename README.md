@@ -44,6 +44,3 @@ Good         3.5  3.9
 Very Good    4.0  4.4
 Excellent    4.5  4.9
 ```
-
-## Summary of how I would deploy this using cloud services and any decisions and considerations I made when designing the solution
-
