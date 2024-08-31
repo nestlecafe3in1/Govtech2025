@@ -37,9 +37,9 @@ $ python Main.py
 Successful run with python `Main.py` will output the files `restaurant_events.csv` and `restaurants.csv` into the folder `output_files` output the following:
 
 ```plaintext
-Restaurant Data exported successfully to output/restaurants.csv
+Restaurant Data exported successfully to output_files/restaurants.csv
 **********************************************************************
-Restaurant Data exported successfully to output/restaurant_events.csv
+Restaurant Data exported successfully to output_files/restaurant_events.csv
 **********************************************************************
 Threshold for the different rating text:
 Rating Text  min  max
