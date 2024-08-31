@@ -107,12 +107,12 @@ class Driver:
     def run(self):
         self.run_question_one()
         print("*" * 70)
-        if self.restaurant_df is not None and not self.restaurant_df.empty:
+        if self.restaurant_df is not None:
             self.run_question_two()
             print("*" * 70)
             self.run_question_three()
         else:
-            print("Error: Restaurant data is not available or empty.")
+            print("Restaurant data is not available.")
 
     def run_question_one(self):
         question_one = QuestionOne()
